@@ -1,8 +1,9 @@
 from django.contrib.auth import login, authenticate, get_user_model
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import TemplateView
-
+from django.contrib.auth.decorators import login_required
+from .forms import AvatarForm
 from users.models import Account
 
 
@@ -57,3 +58,5 @@ class UserMakeRegistrationView(View):
             return render(request, 'home.html')
         else:
             return render(request, 'sign_up.html', {'error': 'Что-то пошло не так.'})
+
+

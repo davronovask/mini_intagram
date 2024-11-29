@@ -23,7 +23,7 @@
                 <!-- nav for big->medium screen -->
                 <div class="nav">
                     <div class="logo">
-                         <a href="./home.html">
+                        <a href="./home.html">
                             <img class="d-block d-lg-none small-logo" src="{% static 'images/instagram.png' %}" alt="logo">
                             <img class="d-none d-lg-block" src="{% static 'images/logo_menu.png' %}" alt="logo">
                         </a>
@@ -33,32 +33,31 @@
                             <li>
                                 <a class="active" href="{% url 'home-url' %}">
                                     <img src="{% static 'images/accueil.png' %}">
-                                    <span class="d-none d-lg-block ">Home</span>
+                                    <span class="d-none d-lg-block">Home</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="{% url 'reels-url' %}">
                                     <img src="{% static 'images/video.png' %}">
-                                    <span class="d-none d-lg-block ">Reels</span>
+                                    <span class="d-none d-lg-block">Reels</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="messages.html">
                                     <img src="{% static 'images/send.png' %}">
-                                    <span class="d-none d-lg-block ">Messages</span>
+                                    <span class="d-none d-lg-block">Messages</span>
                                 </a>
                             </li>
                             <li>
                                 <a href="#" data-bs-toggle="modal" data-bs-target="#create_modal">
                                     <img src="{% static 'images/tab.png' %}">
-                                    <span class="d-none d-lg-block ">Create</span>
+                                    <span class="d-none d-lg-block">Create</span>
                                 </a>
-
                             </li>
                             <li>
                                 <a href="{% url 'profile-url' %}">
                                     <img class="circle story" src="{% static 'images/profile_img.jpg' %}">
-                                    <span class="d-none d-lg-block ">Profile</span>
+                                    <span class="d-none d-lg-block">Profile</span>
                                 </a>
                             </li>
                         </ul>
@@ -76,11 +75,13 @@
                                 <li><a class="dropdown-item" href="#">
                                         <span>Following</span>
                                         <img src="{% static 'images/add-friend.png' %}">
-                                    </a></li>
+                                    </a>
+                                </li>
                                 <li><a class="dropdown-item" href="#">
                                         <span>Favorites</span>
                                         <img src="{% static 'images/star.png' %}">
-                                    </a></li>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <div class="left">
@@ -96,10 +97,9 @@
                             </div>
                             <div class="notifications notification_icon">
                                 <a href="./notification.html">
-                                     <img src="{% static 'images/love.png' %}">
+                                    <img src="{% static 'images/love.png' %}">
                                 </a>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -123,12 +123,10 @@
                         </ul>
                     </div>
                     <div class="left">
-
                         <img src="{% static 'images/send.png' %}">
                         <a href="./notification.html">
                             <img class="notification_icon" src="{% static 'images/love.png' %}">
                         </a>
-
                     </div>
                 </div>
             </div>
@@ -137,7 +135,7 @@
                 <a href="./home.html"><img src="{% static 'images/accueil.png' %}"></a>
                 <a href="./explore.html"><img src="{% static 'images/compass.png' %}"></a>
                 <a href="./reels.html"><img src="{% static 'images/video.png' %}"></a>
-                <a  href="#" data-bs-toggle="modal" data-bs-target="#create_modal"><img src="{% static 'images/tab.png' %}"></a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#create_modal"><img src="{% static 'images/tab.png' %}"></a>
                 <a href="profile.html"><img class="circle story" src="{% static 'images/profile_img.jpg' %}"></a>
             </div>
         </div>
@@ -170,6 +168,7 @@
                 </div>
             </div>
         </div>
+
         <!-- search  -->
         <!-- notification -->
         <div id="notification" class="notification_section">
@@ -306,7 +305,7 @@
         {% block content %}
         {% endblock %}
 
-               <!--Create model-->
+        <!--Create model-->
         <div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
@@ -319,7 +318,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <img class="up_load" src="./images/upload.png" alt="upload">
+                        <img class="up_load" src="{% static 'images/upload.png' %}" alt="upload">
                         <p>Drag photos and videos here</p>
                         <button class="btn btn-primary btn_upload">
                             select from your computer
@@ -335,7 +334,7 @@
                                 <div class="cart">
                                     <div>
                                         <div class="img">
-                                            <img src="./images/profile_img.jpg">
+                                            <img src="{% static 'images/profile_img.jpg' %}">
                                         </div>
                                         <div class="info">
                                             <p class="name">Zineb_essoussi</p>
@@ -348,7 +347,7 @@
                             </div>
                         </div>
                         <div class="post_published hide_img">
-                            <img src="./images/uploaded_post.gif" alt="">
+                            <img src="{% static 'images/uploaded_post.gif' %}" alt="">
                         </div>
                     </div>
                 </div>
@@ -357,17 +356,16 @@
 
     </div>
 
-
-
     <!-- <script src="{% static 'sass/vender/bootstrap.bundle.js' %}"></script>
     <script src="{% static 'sass/vender/bootstrap.bundle.min.js' %}"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
-    <script src="./owlcarousel/jquery.min.js"></script>
-    <script src="./owlcarousel/owl.carousel.min.js"></script>
-    <script src="./js/carousel.js"></script>
+    <script src="{% static 'owlcarousel/jquery.min.js' %}"></script>
+    <script src="{% static 'owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/carousel.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
 </body>
 
 </html>
