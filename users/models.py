@@ -27,3 +27,25 @@ class Account(AbstractUser):
     class Meta:
         verbose_name_plural = 'Аккаунты'
         verbose_name = 'Аккаунт'
+
+
+class AccountFollower(models.Model):
+    following = models.ForeignKey(
+        Account,
+        verbose_name='на кого подписался',
+        on_delete=models.CASCADE,
+        related_name='my_followers',
+    )
+
+    follower = models.ForeignKey(
+        Account,
+        verbose_name='кто подписался',
+        on_delete=models.CASCADE,
+        related_name='my_following',
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ('following', 'follower')  # Ограничиваем, чтобы один и тот же пользователь не мог подписываться дважды
+        verbose_name_plural = 'Подписки'
+        verbose_name = 'Подписка'
