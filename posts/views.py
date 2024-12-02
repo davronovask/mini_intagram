@@ -5,6 +5,28 @@ from users.models import Account, AccountFollower
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .forms import ProfileForm
+
+
+from django.shortcuts import render, redirect
+from .forms import ProfileForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def edit_profile(request):
+    user_account = request.user  # Получаем текущего пользователя
+
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=user_account)
+        if form.is_valid():
+            form.save()  # Сохраняем обновленное описание
+            return redirect('profile-url')  # Перенаправляем на страницу профиля
+    else:
+        form = ProfileForm(instance=user_account)
+
+    return render(request, 'edit_profile.html', {'form': form})
+
 
 class ProfileView(TemplateView):
     template_name = 'profile.html'
@@ -22,6 +44,7 @@ class ProfileView(TemplateView):
             'posts_count': posts_count,
         }
         return context
+
 
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, post_id):
@@ -64,5 +87,7 @@ class ReelsView(TemplateView):
 
 class MessagesView(TemplateView):
     template_name = 'messages.html'
+
+
 
 

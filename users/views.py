@@ -7,6 +7,7 @@ from .forms import AvatarForm
 from users.models import Account
 
 from .models import AccountFollower
+from posts.models import Post
 
 
 class UserRegistrationView(TemplateView):
@@ -15,6 +16,21 @@ class UserRegistrationView(TemplateView):
 
 class LoginPageView(TemplateView):
     template_name = 'login.html'
+
+
+class HomeView(TemplateView):
+    template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+        current_user = self.request.user
+        following_users = AccountFollower.objects.filter(follower=current_user)
+        following_user_ids = [f.following.id for f in following_users]
+
+        # Получаем все посты текущего пользователя и тех, на кого он подписан
+        posts = Post.objects.filter(user__in=following_user_ids + [current_user.id])
+        context = {'posts': posts}
+        return context
+
 
 class UserMakeLoginView(View):
     """Логическая Вююшка для Логина """
@@ -31,26 +47,6 @@ class UserMakeLoginView(View):
             return render(request, 'home.html')
         else:
             return render(request, 'login.html', {'error': 'Invalid username or password'})
-
-    def get_context_data(self, **kwargs):
-        current_user = self.request.user
-
-        # Получаем пользователей, на которых подписан текущий пользователь
-        following_users = AccountFollower.objects.filter(follower=current_user).values_list('user', flat=True)
-
-        # Получаем посты только от подписанных пользователей и самого текущего пользователя
-        posts = Post.objects.filter(
-            Q(user__in=following_users) | Q(user=current_user)
-        ).order_by('-created_at')
-
-        # Добавляем отладочную информацию в контекст
-        context = {
-            'posts': posts,
-            'following_users': following_users,  # Для отладки
-            'current_user': current_user,  # Для отладки
-        }
-
-        return context
 
 
 class UserMakeRegistrationView(View):

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator
 from django.db import models
+
+from posts.models import Post
 from users.managers import AccountManager
 
 
@@ -19,6 +21,8 @@ class Account(AbstractUser):
         blank=True, # Этот параметр указывает, что поле может быть оставлено пустым в формах Django)
     )
 
+    bio = models.TextField(null=True, blank=True, verbose_name='Описание')
+
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
 
@@ -27,6 +31,22 @@ class Account(AbstractUser):
     class Meta:
         verbose_name_plural = 'Аккаунты'
         verbose_name = 'Аккаунт'
+
+    def get_context_data(self, **kwargs):
+        posts = Post.objects.all()  # Получаем все посты
+
+        for post in posts:
+            post.likes_count = post.likes.filter(is_liked=True).count()  # Количество лайков
+            post.comments_count = post.comments.count()  # Количество комментариев
+
+            # Добавляем информацию о том, поставил ли текущий пользователь лайк
+            post.is_liked_by_user = post.likes.filter(user=self.request.user, is_liked=True).exists()
+
+        context = {
+            'posts': posts,
+        }
+
+        return context
 
 
 class AccountFollower(models.Model):

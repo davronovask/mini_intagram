@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;">
+    <div style="width: 100%; max-width: 600px; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+      <h2 style="text-align: center; margin-bottom: 20px;">Edit Profile</h2>
+      <form method="POST">
+        {% csrf_token %}
+        <div style="margin-bottom: 15px;">
+          <label for="id_bio" style="display: block; font-size: 16px; margin-bottom: 5px;">Description:</label>
+          <textarea id="id_bio" name="bio" rows="4" style="width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 5px; resize: vertical; font-size: 16px;">{{ form.bio.value }}</textarea>
+        </div>
+        <div style="text-align: center;">
+          <button type="submit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

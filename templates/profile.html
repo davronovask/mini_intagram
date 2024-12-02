@@ -6,22 +6,20 @@
             <div class="profile_info">
                 <div class="cart">
                         <div class="img">
-                            <img src="{% static 'images/profile_img.jpg' %}" alt="">
+                            <img src="{{ user.avatar.url }}" alt="">
                         </div>
                         <div class="info">
                             <p class="name">
-                                Zineb_essoussi
+                                {{ user.username }}
                             </p>
                             <div class="general_info">
                                 <p><span>1</span> post</p>
                                 <p><span>177</span> followers</p>
                                 <p><span>137</span> following</p>
                             </div>
-                            <p class="nick_name">Zin Ess</p>
-                            <p class="desc">
-                                I'am an engineering student <br>
-                                ENSAO
-                            </p>
+                            <p class="nick_name">{{ user.first_name }}  {{ user.last_name }}</p>
+                            <a href="{% url 'edit_profile' %}">Edit your bio</a>
+                            <p>{{ user.bio }}</p>
                         </div>
                 </div>
             </div>

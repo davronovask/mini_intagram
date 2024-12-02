@@ -23,59 +23,75 @@
                         </div>
 <!--***** это пост!!!!! ****** -->
                         <div class="posts">
-                            <div class="post">
-                                <div class="info">
-                                    <div class="person">
-                                        <img src="https://i.ibb.co/3S1hjKR/account1.jpg">
-                                        <a href="#">zineb</a>
-                                        <span class="circle">.</span>
-                                        <span>45m</span>
-                                    </div>
-                                    <div class="more">
-                                        <img src="{% static './images/show_more.png' %}" alt="show more">
-                                    </div>
-                                </div>
-                                <div class="image">
-                                    <img src="https://i.ibb.co/Jqh3rHv/img1.jpg">
-                                </div>
-                                <div class="desc">
-                                    <div class="icons">
-                                        <div class="icon_left d-flex">
-                                            <div class="like">
-                                                <img class="not_loved" src="{% static './images/love.png' %}">
-                                                <img class="loved" src="{% static './images/heart.png' %}">
-                                            </div>
-                                            <div class="chat">
-                                                <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#message_modal">
-                                                    <img src="{% static './images/bubble-chat.png' %}">
-                                                </button>
-                                            </div>
-                                            <div class="send">
-                                                <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#send_message_modal">
-                                                    <img src="{% static './images/send.png' %}">
-                                                </button>
-                                            </div>
+                            {% for post in posts %}
+                                <div class="post">
+                                    <div class="info">
+                                        <div class="person">
+                                            <img src="{{ post.user.avatar.url }}" alt="{{ post.user.username }}">
+                                            <a href="#">{{ post.user.username }}</a>
+                                            <span class="circle">.</span>
+                                            <span>{{ post.created_at|timesince }} ago</span>
                                         </div>
-                                        <div class="save not_saved">
-                                            <img class="hide saved" src="{% static './images/save_black.png' %}">
-                                            <img class="not_saved" src="{% static './images/save-instagram.png' %}">
+                                        <div class="more">
+                                            <img src="{% static './images/show_more.png' %}" alt="show more">
                                         </div>
                                     </div>
-                                    <div class="liked">
-                                        <a class="bold" href="#">150 likes</a>
+
+                                    <div class="image">
+                                        {% if post.image %}
+                                            <img src="{{ post.image.url }}" alt="post image">
+                                        {% else %}
+                                            <p>No image available</p>
+                                        {% endif %}
                                     </div>
-                                    <div class="post_desc">
-                                        <p>
-                                            <a class="bold" href="#">zineb</a> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima accusantium aperiam quod non minus cumque, recusandae hic soluta harum aut nulla...
-                                        </p>
-                                        <p>
-                                            <a class="gray" href="#">View all 2 comments</a>
-                                        </p>
-                                        <input type="text" placeholder="Add a comments...">
+
+                                    <div class="desc">
+                                        <div class="icons">
+                                            <div class="icon_left d-flex">
+                                                <div class="like">
+                                                    {% if post.is_liked_by_user %}
+                                                        <img class="loved" src="{% static './images/heart.png' %}" alt="Liked">
+                                                    {% else %}
+                                                        <img class="not_loved" src="{% static './images/love.png' %}" alt="Not Liked">
+                                                    {% endif %}
+                                                </div>
+                                                <div class="chat">
+                                                    <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#message_modal">
+                                                        <img src="{% static './images/bubble-chat.png' %}" alt="Chat">
+                                                    </button>
+                                                </div>
+                                                <div class="send">
+                                                    <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#send_message_modal">
+                                                        <img src="{% static './images/send.png' %}" alt="Send">
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="save not_saved">
+                                                <img class="hide saved" src="{% static './images/save_black.png' %}" alt="Saved">
+                                                <img class="not_saved" src="{% static './images/save-instagram.png' %}" alt="Save">
+                                            </div>
+                                        </div>
+
+                                        <div class="liked">
+                                            <a class="bold" href="#">{{ post.likes_count }} likes</a>
+                                        </div>
+
+                                        <div class="post_desc">
+                                            <p>
+                                                <a class="bold" href="#">{{ post.user.username }}</a> {{ post.content }}
+                                            </p>
+                                            <p>
+                                                <a class="gray" href="#">View all {{ post.comments_count }} comments</a>
+                                            </p>
+                                            <input type="text" placeholder="Add a comment...">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            {% endfor %}
                         </div>
+
+
 <!--***** это пост!!!!! ****** -->
                     </div>
                 </div>
