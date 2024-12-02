@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.urls import path
 
 from users.views import UserRegistrationView, LoginPageView, UserMakeLoginView, UserMakeRegistrationView
-from posts.views import ProfileView, ReelsView, HomeView
+from posts.views import ProfileView, ReelsView, HomeView, MessagesView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,8 +15,8 @@ urlpatterns = [
 
     path('profile/', ProfileView.as_view(), name='profile-url'),
     path('reels/', ReelsView.as_view(), name='reels-url'),
-    path('home/', HomeView.as_view(), name='home-url')
-
+    path('home/', HomeView.as_view(), name='home-url'),
+    path('messages/', MessagesView.as_view(), name='messages-url'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
