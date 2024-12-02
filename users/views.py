@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import AvatarForm
 from users.models import Account
 
+from .models import AccountFollower
+
 
 class UserRegistrationView(TemplateView):
     template_name = 'sign_up.html'
@@ -29,6 +31,26 @@ class UserMakeLoginView(View):
             return render(request, 'home.html')
         else:
             return render(request, 'login.html', {'error': 'Invalid username or password'})
+
+    def get_context_data(self, **kwargs):
+        current_user = self.request.user
+
+        # Получаем пользователей, на которых подписан текущий пользователь
+        following_users = AccountFollower.objects.filter(follower=current_user).values_list('user', flat=True)
+
+        # Получаем посты только от подписанных пользователей и самого текущего пользователя
+        posts = Post.objects.filter(
+            Q(user__in=following_users) | Q(user=current_user)
+        ).order_by('-created_at')
+
+        # Добавляем отладочную информацию в контекст
+        context = {
+            'posts': posts,
+            'following_users': following_users,  # Для отладки
+            'current_user': current_user,  # Для отладки
+        }
+
+        return context
 
 
 class UserMakeRegistrationView(View):

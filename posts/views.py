@@ -23,26 +23,6 @@ class ProfileView(TemplateView):
         }
         return context
 
-
-
-class HomeView(View):
-    template_name = 'home.html'
-
-    def get(self, request, *args, **kwargs):
-        current_user = self.request.user
-
-        # Получаем всех пользователей, на которых подписан текущий пользователь
-        following_users = AccountFollower.objects.filter(follower=current_user).values_list('following', flat=True)
-
-        # Получаем посты только от тех пользователей, на которых подписан текущий пользователь
-        posts = Post.objects.filter(user__in=following_users)
-
-        context = {
-            'posts': posts,
-        }
-        return render(request, self.template_name, context)
-
-
 class CommentView(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = Post.objects.get(id=post_id)
