@@ -29,6 +29,13 @@
                         <div class="menu">
                             <ul>
                                 <li>
+                                    <form method="get" action="{% url 'search-users-url' %}" style="display: flex; justify-content: center; align-items: center; padding: 20px;">
+                                        <input type="text" name="q" placeholder="Поиск по никнейму" value="{{ query }}"
+                                               style="padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; width: 200px; margin-right: 10px;">
+                                        <button type="submit" style="background-color: #ff69b4; color: white; border: none; padding: 10px 15px; font-size: 16px; border-radius: 5px;">Поиск</button>
+                                    </form>
+                                </li>
+                                <li>
                                     <a class="active" href="{% url 'home-url' %}">
                                         <img src="{% static './images/accueil.png' %}">
                                         <span class="d-none d-lg-block ">Home</span>
@@ -47,20 +54,57 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" data-bs-toggle="modal" data-bs-target="#create_modal">
-                                        <img src="{% static './images/tab.png' %}">
-                                        <span class="d-none d-lg-block ">Create</span>
-                                    </a>
+
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#create_modal">
+                                            <img src="{% static './images/tab.png' %}">
+                                            <span class="d-none d-lg-block ">Create</span>
+                                        </a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'profile-url' %}">
-                                        <img class="circle story" src="{{ user.avatar.url }}">
-                                        <span class="d-none d-lg-block ">Profile</span>
+                                    <a href="{% url 'profile-url' user.id %}">
+                                        {% if user.avatar %}
+                                            <img class="circle story" src="{{ user.avatar.url }}" alt="User Avatar">
+                                        {% else %}
+                                            <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
+                                        {% endif %}
+                                        <span class="d-none d-lg-block">Profile</span>
                                     </a>
                                 </li>
                             </ul>
                         </div>
                     </div>
+
+                        <!-- Модальное окно для создания поста -->
+                        <div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="createModalLabel">Создать пост</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Форма для создания поста -->
+                                        <form method="POST" enctype="multipart/form-data" id="create_form">
+                                            {% csrf_token %}
+
+                                            <!-- Поле для описания поста -->
+                                            <label for="description">Описание:</label>
+                                            <textarea id="description" name="description" rows="4" class="form-control" placeholder="Введите описание"></textarea>
+
+                                            <!-- Поле для загрузки изображения -->
+                                            <label for="image">Выберите изображение:</label>
+                                            <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <!-- Кнопка закрытия модального окна -->
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                        <!-- Кнопка отправки формы -->
+                                        <button type="submit" form="create_form" class="btn btn-primary">Сохранить</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     <!-- nav for small screen  -->
                     <div class="nav_sm">
                         <div class="content">
@@ -299,5 +343,8 @@
         {% block content %}
         {% endblock %}
 
-</body>
+
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
+    </body>
 </html>

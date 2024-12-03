@@ -1,0 +1,25 @@
+<!-- upload_avatar.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="upload-avatar-container">
+    <h2>Загрузить аватар</h2>
+
+    {% if error %}
+      <p class="error-message">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="upload-avatar-form">
+      {% csrf_token %}
+      <label for="avatar" class="upload-label">Выберите аватар</label>
+      <input type="file" id="avatar" name="avatar" accept="image/*" class="file-input">
+
+      <div class="image-preview-container">
+        <img id="avatar-preview" src="{% if user.account.avatar %}{{ user.account.avatar.url }}{% else %}{% static 'default-avatar.png' %}{% endif %}" alt="Preview" class="avatar-preview">
+      </div>
+
+      <button type="submit" class="save-button">Сохранить</button>
+    </form>
+  </div>
+{% endblock %}

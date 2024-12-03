@@ -1,0 +1,10 @@
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="description">Описание:</label>
+    <textarea id="description" name="description" rows="4" class="form-control"></textarea>
+
+    <label for="image">Изображение:</label>
+    <input type="file" id="image" name="image" class="form-control">
+
+    <button type="submit" class="btn btn-primary">Создать пост</button>
+</form>

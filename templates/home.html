@@ -27,7 +27,11 @@
                                 <div class="post">
                                     <div class="info">
                                         <div class="person">
-                                            <img src="{{ post.user.avatar.url }}" alt="{{ post.user.username }}">
+                                            {% if user.avatar %}
+                                                <img class="circle story" src="{{ user.avatar.url }}" alt="User Avatar">
+                                            {% else %}
+                                                <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
+                                            {% endif %}
                                             <a href="#">{{ post.user.username }}</a>
                                             <span class="circle">.</span>
                                             <span>{{ post.created_at|timesince }} ago</span>
