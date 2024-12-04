@@ -8,6 +8,9 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['content', 'image']
 
+image = forms.ImageField(required=True)
+
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Account

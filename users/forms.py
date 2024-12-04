@@ -1,5 +1,7 @@
 from django import forms
 from .models import Account
+from posts.models import Comment
+
 
 class AvatarForm(forms.ModelForm):
     class Meta:
@@ -13,3 +15,8 @@ class AvatarForm(forms.ModelForm):
             if avatar.size > 5 * 1024 * 1024:  # Ограничение 5 МБ
                 raise forms.ValidationError("Размер файла не должен превышать 5 МБ.")
         return avatar
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']

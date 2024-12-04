@@ -21,82 +21,119 @@
                                 </div>
                             </div>
                         </div>
-<!--***** это пост!!!!! ****** -->
-                        <div class="posts">
-                            {% for post in posts %}
-                                <div class="post">
-                                    <div class="info">
-                                        <div class="person">
-                                            {% if user.avatar %}
-                                                <img class="circle story" src="{{ user.avatar.url }}" alt="User Avatar">
+                            <!-- ***** Это пост!!!!! ****** -->
+                            <div class="posts">
+                                {% for post in posts %}
+                                    <div class="post" data-post-id="{{ post.id }}">
+                                        <div class="info">
+                                            <div class="person">
+                                                {% if post.user.avatar %}
+                                                    <img class="circle story" src="{{ post.user.avatar.url }}" alt="User Avatar">
+                                                {% else %}
+                                                    <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
+                                                {% endif %}
+                                                <a href="#">{{ post.user.username }}</a>
+                                                <span class="circle">.</span>
+                                                <span>{{ post.created_at|timesince }} ago</span>
+                                            </div>
+                                            <div class="more">
+                                                <img src="{% static './images/show_more.png' %}" alt="show more">
+                                            </div>
+                                        </div>
+
+                                        <div class="image">
+                                            {% if post.image %}
+                                                <img src="{{ post.image.url }}" alt="post image">
                                             {% else %}
-                                                <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
+                                                <p>No image available</p>
                                             {% endif %}
-                                            <a href="#">{{ post.user.username }}</a>
-                                            <span class="circle">.</span>
-                                            <span>{{ post.created_at|timesince }} ago</span>
                                         </div>
-                                        <div class="more">
-                                            <img src="{% static './images/show_more.png' %}" alt="show more">
-                                        </div>
-                                    </div>
 
-                                    <div class="image">
-                                        {% if post.image %}
-                                            <img src="{{ post.image.url }}" alt="post image">
-                                        {% else %}
-                                            <p>No image available</p>
-                                        {% endif %}
-                                    </div>
+                                        <div class="desc">
+                                            <div class="icons">
+                                                <div class="icon_left d-flex">
+                                                    <!-- Like button (no square) -->
+                                                    <div class="like">
+                                                        <form action="{% url 'like-url' post.id %}" method="POST">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="like-button {% if post.is_liked_by_user %} liked {% endif %}">
+                                                                {% if post.is_liked_by_user %}
+                                                                    <img src="{% static './images/heart.png' %}" alt="Liked">
+                                                                {% else %}
+                                                                    <img src="{% static './images/love.png' %}" alt="Not Liked">
+                                                                {% endif %}
+                                                            </button>
+                                                        </form>
+                                                    </div>
 
-                                    <div class="desc">
-                                        <div class="icons">
-                                            <div class="icon_left d-flex">
-                                                <div class="like">
-                                                    {% if post.is_liked_by_user %}
-                                                        <img class="loved" src="{% static './images/heart.png' %}" alt="Liked">
-                                                    {% else %}
-                                                        <img class="not_loved" src="{% static './images/love.png' %}" alt="Not Liked">
-                                                    {% endif %}
+                                                    <div class="chat">
+                                                        <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#message_modal">
+                                                            <img src="{% static './images/bubble-chat.png' %}" alt="Chat">
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="send">
+                                                        <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#send_message_modal">
+                                                            <img src="{% static './images/send.png' %}" alt="Send">
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <div class="chat">
-                                                    <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#message_modal">
-                                                        <img src="{% static './images/bubble-chat.png' %}" alt="Chat">
-                                                    </button>
-                                                </div>
-                                                <div class="send">
-                                                    <button type="button" class="btn p-0" data-bs-toggle="modal" data-bs-target="#send_message_modal">
-                                                        <img src="{% static './images/send.png' %}" alt="Send">
-                                                    </button>
+
+                                                <div class="save not_saved">
+                                                    <img class="hide saved" src="{% static './images/save_black.png' %}" alt="Saved">
+                                                    <img class="not_saved" src="{% static './images/save-instagram.png' %}" alt="Save">
                                                 </div>
                                             </div>
 
-                                            <div class="save not_saved">
-                                                <img class="hide saved" src="{% static './images/save_black.png' %}" alt="Saved">
-                                                <img class="not_saved" src="{% static './images/save-instagram.png' %}" alt="Save">
+                                            <div class="liked">
+                                                <a class="bold" href="#">{{ post.likes.count }} likes</a>
+                                            </div>
+
+                                            <div class="post_desc">
+                                                <p>
+                                                    <a class="bold" href="#">{{ post.user.username }}</a> {{ post.content }}
+                                                </p>
+                                                <p>
+                                                    <a class="gray" href="#">View all {{ post.comments_count }} comments</a>
+                                                </p>
+                                                <input type="text" placeholder="Add a comment...">
                                             </div>
                                         </div>
-
-                                        <div class="liked">
-                                            <a class="bold" href="#">{{ post.likes_count }} likes</a>
-                                        </div>
-
-                                        <div class="post_desc">
-                                            <p>
-                                                <a class="bold" href="#">{{ post.user.username }}</a> {{ post.content }}
-                                            </p>
-                                            <p>
-                                                <a class="gray" href="#">View all {{ post.comments_count }} comments</a>
-                                            </p>
-                                            <input type="text" placeholder="Add a comment...">
-                                        </div>
                                     </div>
-                                </div>
-                            {% endfor %}
-                        </div>
+                                {% endfor %}
+                            </div>
+                            <!-- ***** Это пост!!!!! ****** -->
+
+                            <!-- Добавление стилей внутри шаблона -->
+                            <style>
+                                /* Убираем лайк внутри квадратика */
+                                .like-button {
+                                    background: none;
+                                    border: none;
+                                    padding: 0;
+                                    cursor: pointer;
+                                }
+
+                                /* Изменения стилей для изображений лайков */
+                                .like-button img {
+                                    width: 24px; /* Или нужный вам размер */
+                                    height: auto;
+                                    transition: transform 0.2s ease, filter 0.2s ease; /* Плавный переход для анимации */
+                                }
+
+                                /* Подсветка нажатого лайка */
+                                .like-button.liked img {
+                                    filter: brightness(0) saturate(100%) invert(16%) sepia(100%) saturate(4910%) hue-rotate(350deg) brightness(99%) contrast(100%);
+                                }
+
+                                /* Увеличение и эффект нажатия */
+                                .like-button:hover img {
+                                    transform: scale(1.1); /* Увеличение при наведении */
+                                }
+                            </style>
 
 
-<!--***** это пост!!!!! ****** -->
+
                     </div>
                 </div>
                 <!--***** posts_container end ****** -->
@@ -141,63 +178,6 @@
                     </div>
                 </div>
                 <!--***** followers_container end ****** -->
-            </div>
-            <!-- Modal for sending posts-->
-            <div class="modal fade" id="send_message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Share</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="send">
-                                <div class="search_person">
-                                    <p>To:</p>
-                                    <input type="text" placeholder="Search">
-                                </div>
-                                <p>Suggested</p>
-                                <div class="poeple">
-                                    <div class="person">
-                                        <div class="d-flex">
-                                            <div class="img">
-                                                <img src="{% static './images/profile_img.jpg' %}" alt="">
-                                            </div>
-                                            <div class="content">
-                                                <div class="person">
-                                                    <h4>namePerson</h4>
-                                                    <span>zim ess</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="circle">
-                                            <span></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="person">
-                                    <div class="d-flex">
-                                        <div class="img">
-                                            <img src="{% static './images/profile_img.jpg' %}" alt="">
-                                        </div>
-                                        <div class="content">
-                                            <div class="person">
-                                                <h4>namePerson</h4>
-                                                <span>zim ess</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="circle">
-                                        <span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-primary">Send</button>
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- Modal for add messages-->
             <div class="modal fade" id="message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

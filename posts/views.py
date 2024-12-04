@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View
@@ -11,6 +12,25 @@ from django.views.generic.edit import CreateView
 from django.shortcuts import render, redirect
 from .forms import ProfileForm, PostForm
 from django.contrib.auth.decorators import login_required
+
+
+def add_comment(request, post_id):
+    if request.method == 'POST':
+        post = Post.objects.get(id=post_id)
+        comment_content = request.POST.get('content')
+
+        # Создаем новый комментарий
+        Comment.objects.create(post=post, user=request.user, content=comment_content)
+
+        # Возвращаем JSON ответ с количеством комментариев
+        return JsonResponse({
+            'success': True,
+            'comments_count': post.comments.count(),
+            'comment_content': comment_content,
+            'user': request.user.username
+        })
+
+    return redirect('home')
 
 
 @login_required
@@ -38,16 +58,28 @@ def edit_profile(request):
 
     return render(request, 'edit_profile.html', {'form': form})
 
+
+@login_required
 def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
+
         if form.is_valid():
-            form.save()  # сохраняем форму, если она валидна
-            return redirect('some_success_url')  # редирект на успешную страницу
+            # Проверяем, загружено ли изображение
+            if not form.cleaned_data['image']:
+                form.add_error('image',
+                               'Пожалуйста, загрузите изображение.')  # Добавляем ошибку, если изображение не загружено
+            else:
+                post = form.save(commit=False)
+                post.user = request.user  # Присваиваем автору поста текущего пользователя
+                post.save()
+                return redirect('home-url')  # Перенаправляем на главную страницу или на страницу постов
+        else:
+            # Если форма не валидна, просто перерисовываем форму с ошибками
+            return render(request, 'create.html', {'form': form})
     else:
         form = PostForm()
-
-    return render(request, 'posts/create_post.html', {'form': form})
+    return render(request, 'create_post.html', {'form': form})
 
     class ProfileView(TemplateView):
         template_name = 'profile.html'
@@ -56,24 +88,14 @@ class ProfileView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        user_id = kwargs.get('user_id')  # Получаем user_id из URL
+        user_profile = Account.objects.get(id=user_id)  # Получаем профиль пользователя
 
-        if 'user_id' in self.kwargs:
-            user_id = self.kwargs['user_id']
-            try:
-                user_profile = Account.objects.get(id=user_id)
-                context['user_profile'] = user_profile
-                context['is_following'] = AccountFollower.objects.filter(follower=self.request.user, following=user_profile).exists()
-                # Получаем посты этого пользователя
-                posts = Post.objects.filter(user=user_profile)
-                context['posts'] = posts
-            except Account.DoesNotExist:
-                context['user_profile'] = None
-        else:
-            user_profile = self.request.user
-            context['user_profile'] = user_profile
-            context['is_following'] = False
-            posts = Post.objects.filter(user=user_profile)
-            context['posts'] = posts
+        # Получаем все посты пользователя
+        posts = Post.objects.filter(user=user_profile)
+        context['user_profile'] = user_profile
+        context['posts'] = posts
+        context['message'] = self.request.GET.get('message')  # Передаем сообщение из GET-параметра
 
         return context
 
@@ -97,22 +119,15 @@ class LikeView(View):
     def post(self, request, post_id):
         post = Post.objects.get(id=post_id)
 
-        # Проверяем, есть ли лайк от текущего пользователя для данного поста
-        like = Like.objects.filter(user=request.user, post=post).first()
-
-        if like:
-            # Если лайк существует, то меняем его статус (лайкнуто/не лайкнуто)
-            like.is_liked = not like.is_liked
-            like.save()
-            liked = like.is_liked
+        # Если пользователь уже поставил лайк, удаляем его
+        if Like.objects.filter(post=post, user=request.user).exists():
+            Like.objects.filter(post=post, user=request.user).delete()
         else:
-            # Если лайка нет, создаем новый лайк с is_liked=True
-            Like.objects.create(user=request.user, post=post, is_liked=True)
-            liked = True
+            # Если лайк не поставлен, ставим лайк
+            Like.objects.create(post=post, user=request.user)
 
-        # Возвращаем информацию о статусе лайка и количестве лайков
-        like_count = Like.objects.filter(post=post, is_liked=True).count()
-        return JsonResponse({'liked': liked, 'like_count': like_count})
+        # Перенаправляем обратно на страницу
+        return redirect('home-url')
 
 
 class ReelsView(TemplateView):

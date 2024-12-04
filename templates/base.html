@@ -49,16 +49,21 @@
                                 </li>
                                 <li>
                                     <a href="{% url 'messages-url' %}">
-                                        <img src="{% static './images/send.png' %}">
-                                        <span class="d-none d-lg-block ">Messages</span>
+                                        <img src="{% static 'images/send.png' %}" alt="Messages Icon">
+                                        <span class="d-none d-lg-block">Messages</span>
+
+                                        <!-- Динамическое отображение количества непрочитанных сообщений -->
+                                        {% if unread_messages_count > 0 %}
+                                            <span class="badge bg-danger">{{ unread_messages_count }}</span> <!-- Показываем количество -->
+                                        {% endif %}
                                     </a>
                                 </li>
                                 <li>
 
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#create_modal">
-                                            <img src="{% static './images/tab.png' %}">
-                                            <span class="d-none d-lg-block ">Create</span>
-                                        </a>
+                                    <a href="{% url 'create-post' %}">
+                                        <img src="{% static './images/tab.png' %}">
+                                        <span class="d-none d-lg-block">Create</span>
+                                    </a>
                                 </li>
                                 <li>
                                     <a href="{% url 'profile-url' user.id %}">
@@ -73,38 +78,6 @@
                             </ul>
                         </div>
                     </div>
-
-                        <!-- Модальное окно для создания поста -->
-                        <div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="createModalLabel">Создать пост</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Форма для создания поста -->
-                                        <form method="POST" enctype="multipart/form-data" id="create_form">
-                                            {% csrf_token %}
-
-                                            <!-- Поле для описания поста -->
-                                            <label for="description">Описание:</label>
-                                            <textarea id="description" name="description" rows="4" class="form-control" placeholder="Введите описание"></textarea>
-
-                                            <!-- Поле для загрузки изображения -->
-                                            <label for="image">Выберите изображение:</label>
-                                            <input type="file" id="image" name="image" class="form-control" accept="image/*">
-                                        </form>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <!-- Кнопка закрытия модального окна -->
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                                        <!-- Кнопка отправки формы -->
-                                        <button type="submit" form="create_form" class="btn btn-primary">Сохранить</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     <!-- nav for small screen  -->
                     <div class="nav_sm">
                         <div class="content">

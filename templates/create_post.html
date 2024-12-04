@@ -1,10 +1,200 @@
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <label for="description">Описание:</label>
-    <textarea id="description" name="description" rows="4" class="form-control"></textarea>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать пост</title>
 
-    <label for="image">Изображение:</label>
-    <input type="file" id="image" name="image" class="form-control">
+    <!-- Подключение стилей для красивого оформления -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    <button type="submit" class="btn btn-primary">Создать пост</button>
-</form>
+        h1 {
+            font-size: 36px;
+            color: #9b59b6; /* Фиолетовый оттенок */
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        label {
+            font-size: 18px;
+            font-weight: bold;
+            color: #9b59b6; /* Фиолетовый оттенок */
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="file"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #d1d1d1;
+            border-radius: 8px;
+            background-color: #f5f5f5;
+            font-size: 16px;
+            color: #333;
+        }
+
+        input[type="file"] {
+            background-color: #fff;
+        }
+
+        .errors {
+            color: #e74c3c; /* Красный для ошибок */
+            font-size: 14px;
+            padding: 5px;
+        }
+
+        .btn-primary {
+            background-color: #ff7f7f; /* Розовый для кнопки */
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff5c5c; /* Темнее розовый на hover */
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #9b59b6; /* Фиолетовый для ссылки */
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #9b59b6;
+            transition: background-color 0.3s;
+        }
+
+        .back-link:hover {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none; /* Показывать изображение после его выбора */
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-container input[type="file"]::file-selector-button {
+            background-color: #9b59b6; /* Фиолетовая кнопка для выбора файла */
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-container input[type="file"]::file-selector-button:hover {
+            background-color: #8e44ad; /* Темный фиолетовый на hover */
+        }
+
+        .form-group textarea {
+            resize: none;
+        }
+
+        /* Кастомизация кнопки выбора изображения */
+        input[type="file"] {
+            background-color: #f9f9f9;
+            border-color: #d1d1d1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h1>Создать новый пост</h1>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="content">Описание:</label>
+                {{ form.content }}  <!-- Выводим описание из формы (теперь content) -->
+                {% if form.content.errors %}
+                    <ul class="errors">
+                        {% for error in form.content.errors %}
+                            <li>{{ error }}</li>  <!-- Отображаем ошибки, если они есть -->
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="image">Выберите изображение (обязательно):</label>
+                {{ form.image }}  <!-- Выводим поле для изображения -->
+                {% if form.image.errors %}
+                    <ul class="errors">
+                        {% for error in form.image.errors %}
+                            <li>{{ error }}</li>  <!-- Отображаем ошибки для изображения -->
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+                <!-- Для предпросмотра изображения -->
+                <img id="imagePreview" class="image-preview" src="" alt="Предпросмотр изображения">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+
+        <a href="{% url 'home-url' %}" class="back-link">Вернуться на главную</a>
+    </div>
+
+    <!-- Скрипт для предпросмотра изображения -->
+    <script>
+        const imageInput = document.querySelector('input[type="file"]');
+        const imagePreview = document.getElementById('imagePreview');
+
+        imageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';  // Показываем изображение
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';  // Скрываем изображение, если файл не выбран
+            }
+        });
+    </script>
+
+</body>
+</html>

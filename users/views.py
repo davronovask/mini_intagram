@@ -9,6 +9,10 @@ from users.models import Account
 from .models import AccountFollower
 from posts.models import Post
 
+from posts.models import Like, Comment
+
+
+
 
 def search_users(request):
     query = request.GET.get('q', '')  # Получаем запрос из URL
@@ -27,8 +31,11 @@ def follow_user(request, user_id):
     # Проверяем, подписан ли уже текущий пользователь
     if not AccountFollower.objects.filter(follower=request.user, following=user_to_follow).exists():
         AccountFollower.objects.create(follower=request.user, following=user_to_follow)
+        message = "Вы подписались на пользователя."
+    else:
+        message = "Вы уже подписаны на этого пользователя."
 
-    return redirect('profile-url', user_id=user_to_follow.id)
+    return redirect('profile-url', user_id=user_to_follow.id)  # Исправляем на 'profile-url' с параметром user_id
 
 @login_required
 def unfollow_user(request, user_id):
@@ -36,8 +43,9 @@ def unfollow_user(request, user_id):
 
     # Удаляем подписку
     AccountFollower.objects.filter(follower=request.user, following=user_to_unfollow).delete()
+    message = "Вы отписались от пользователя."
 
-    return redirect('profile-url', user_id=user_to_unfollow.id)
+    return redirect('profile-url', user_id=user_to_unfollow.id)  # Аналогично, используем 'profile-url'
 class UserRegistrationView(TemplateView):
     template_name = 'sign_up.html'
 
@@ -50,13 +58,39 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         current_user = self.request.user
+
+        # Находим всех пользователей, на которых подписан текущий пользователь
         following_users = AccountFollower.objects.filter(follower=current_user)
         following_user_ids = [f.following.id for f in following_users]
 
         # Получаем все посты текущего пользователя и тех, на кого он подписан
         posts = Post.objects.filter(user__in=following_user_ids + [current_user.id])
-        context = {'posts': posts}
+
+        # Добавляем информацию о лайках для каждого поста
+        posts_with_likes = []
+        for post in posts:
+            post.is_liked = Like.objects.filter(user=current_user, post=post).exists()
+            post.likes_count = post.likes.count()  # Количество лайков
+            # Получаем все комментарии с использованием обратной связи
+            post.comments_list = post.comments.all()  # Получаем все комментарии
+            posts_with_likes.append(post)
+
+        context = {
+            'posts': posts_with_likes,
+        }
         return context
+
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            post_id = request.POST.get('post_id')
+            content = request.POST.get('content')
+
+            if post_id and content:
+                post = Post.objects.get(id=post_id)
+                Comment.objects.create(post=post, user=request.user, content=content)
+
+        return redirect('home-url')
 
 
 class UserMakeLoginView(View):
