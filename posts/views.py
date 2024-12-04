@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, View
 from .models import Post, Comment, Like
 from users.models import Account, AccountFollower
@@ -49,10 +49,10 @@ def edit_profile(request):
     user_account = request.user  # Получаем текущего пользователя
 
     if request.method == "POST":
-        form = ProfileForm(request.POST, instance=user_account)
+        form = ProfileForm(request.POST, request.FILES, instance=user_account)
         if form.is_valid():
-            form.save()  # Сохраняем обновленное описание
-            return redirect('profile-url')  # Перенаправляем на страницу профиля
+            form.save()  # Сохраняем обновленный профиль
+            return redirect(reverse('profile-url', args=[user_account.id]))  # Перенаправляем на профиль
     else:
         form = ProfileForm(instance=user_account)
 
@@ -83,20 +83,19 @@ def create_post(request):
 
     class ProfileView(TemplateView):
         template_name = 'profile.html'
-class ProfileView(TemplateView):
+
+class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'profile.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user_id = kwargs.get('user_id')  # Получаем user_id из URL
-        user_profile = Account.objects.get(id=user_id)  # Получаем профиль пользователя
+        user_profile = get_object_or_404(Account, id=user_id)
 
         # Получаем все посты пользователя
         posts = Post.objects.filter(user=user_profile)
         context['user_profile'] = user_profile
         context['posts'] = posts
-        context['message'] = self.request.GET.get('message')  # Передаем сообщение из GET-параметра
-
         return context
 
 
