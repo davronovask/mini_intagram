@@ -15,7 +15,7 @@ from posts.views import ProfileView, ReelsView, MessagesView, LikeView, AddComme
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('registration/', UserRegistrationView.as_view(), name='registration-url'),
+    path('', UserRegistrationView.as_view(), name='registration-url'),
     path('login/', LoginPageView.as_view(), name='login-url'),
     path('make-login/', UserMakeLoginView.as_view(), name='make-login-url'),
     path('home/', HomeView.as_view(), name='home-url'),
