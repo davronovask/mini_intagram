@@ -80,14 +80,14 @@ class HomeView(TemplateView):
         }
         return context
 
-
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
             post_id = request.POST.get('post_id')
-            content = request.POST.get('content')
+            content = request.POST.get('comment_text')  # Получаем текст комментария
 
             if post_id and content:
                 post = Post.objects.get(id=post_id)
+                # Создаем комментарий
                 Comment.objects.create(post=post, user=request.user, content=content)
 
         return redirect('home-url')
@@ -139,16 +139,24 @@ class UploadAvatarView(View):
     """Страница для загрузки аватара"""
 
     def get(self, request, user_id, *args, **kwargs):
-        user = Account.objects.get(id=user_id)  # Получаем пользователя по user_id
+        try:
+            user = Account.objects.get(id=user_id)  # Получаем пользователя по user_id
+        except Account.DoesNotExist:
+            return redirect('home-url')  # Если пользователя нет, перенаправляем на главную
+
         form = AvatarForm(instance=user)  # Создаем форму с существующим пользователем
         return render(request, 'upload_avatar.html', {'form': form})
 
     def post(self, request, user_id, *args, **kwargs):
-        user = Account.objects.get(id=user_id)  # Получаем пользователя по user_id
+        try:
+            user = Account.objects.get(id=user_id)  # Получаем пользователя по user_id
+        except Account.DoesNotExist:
+            return render(request, 'upload_avatar.html', {'error': 'Пользователь не найден.'})
+
         form = AvatarForm(request.POST, request.FILES, instance=user)
 
         if form.is_valid():
             form.save()
-            return redirect('home-url')  # Перенаправление на главную страницу или профиль
+            return redirect('profile-url', user_id=user.id)  # Перенаправление на профиль пользователя
 
         return render(request, 'upload_avatar.html', {'form': form, 'error': 'Ошибка при загрузке аватара'})

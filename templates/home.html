@@ -187,40 +187,49 @@
                             <h1 class="modal-title fs-5" id="exampleModalLabel">Comments</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+                        {% for item in post.comments.all %}
                         <div class="modal-body">
                             <div class="comments">
                                 <div class="responses">
                                     <div class="response comment">
                                         <div class="d-flex">
                                             <div class="img">
-                                                <img src="{% static './images/profile_img.jpg' %}" alt="">
+                                        {% if user.avatar %}
+                                            <img class="circle story" src="{{ user.avatar.url }}" alt="User Avatar">
+                                        {% else %}
+                                            <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
+                                        {% endif %}
                                             </div>
                                             <div class="content">
                                                 <div class="person">
-                                                    <h4>namePerson</h4>
+                                                    <h4>"{{ user.username }}"</h4>
                                                     <span>3j</span>
                                                 </div>
-                                                <p>Wow amzing shot</p>
+                                                <p>{{item.content}}</p>
                                                 <div class="replay">
                                                     <button>replay</button>
                                                     <button>see translation</button>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="like">
-                                            <img class="not_loved" src="{% static './images/love.png' %}" alt="">
-                                            <img class="loved" src="{% static './images/heart.png' %}" alt="">
-                                            <p> 55</p>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        {% endfor %}
                         <div class="modal-footer">
-                            <form method="post">
+                            <form method="post" action="add-comment/">
+                                {% csrf_token %}
                                 <div class="input">
-                                    <img src="{% static './images/profile_img.jpg' %}" alt="">
-                                    <input type="text" id="emoji_comment" placeholder="Add a comment..." />
+                                    <a href="{% url 'profile-url' user.id %}">
+                                        {% if user.avatar %}
+                                            <img class="circle story" src="{{ user.avatar.url }}" alt="User Avatar">
+                                        {% else %}
+                                            <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
+                                        {% endif %}
+                                    </a>
+                                    <input name="comment_text" type="text" id="emoji_comment" placeholder="Add a comment..." />
+                                    <button type="submit" class="btn btn-primary">Отправить</button>
                                 </div>
                                 <!-- <div class="emogi"><img src="./images/emogi.png" alt=""></div> -->
                             </form>

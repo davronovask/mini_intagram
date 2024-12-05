@@ -9,9 +9,9 @@ from users.views import follow_user, unfollow_user, search_users
 from posts import views
 from users.views import UserRegistrationView, LoginPageView, UserMakeLoginView, UserMakeRegistrationView, HomeView, \
     UploadAvatarView
-from posts.views import ProfileView, ReelsView, MessagesView, LikeView
+from posts.views import ProfileView, ReelsView, MessagesView, LikeView, AddCommentView
 
-from posts.views import add_comment
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,7 +42,7 @@ urlpatterns = [
 
     path('create/', views.create_post, name='create-post'),
 
-    path('add-comment/<int:post_id>/', views.add_comment, name='add-comment'),
+    path('add-comment/<int:pk>/', AddCommentView.as_view(), name='add-comment-url'),
 
 ]
 

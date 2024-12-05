@@ -14,25 +14,6 @@ from .forms import ProfileForm, PostForm
 from django.contrib.auth.decorators import login_required
 
 
-def add_comment(request, post_id):
-    if request.method == 'POST':
-        post = Post.objects.get(id=post_id)
-        comment_content = request.POST.get('content')
-
-        # Создаем новый комментарий
-        Comment.objects.create(post=post, user=request.user, content=comment_content)
-
-        # Возвращаем JSON ответ с количеством комментариев
-        return JsonResponse({
-            'success': True,
-            'comments_count': post.comments.count(),
-            'comment_content': comment_content,
-            'user': request.user.username
-        })
-
-    return redirect('home')
-
-
 @login_required
 def profile(request, user_id):
     user_profile = get_object_or_404(Account, id=user_id)
@@ -100,19 +81,16 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
 
 
-class CommentView(LoginRequiredMixin, View):
-    def post(self, request, post_id):
-        post = Post.objects.get(id=post_id)
-        content = request.POST.get('content')
+class AddCommentView(TemplateView):
+    def post(self, request, *args, **kwargs):
+        post_pk = kwargs['pk']
+        post = Post.objects.get(id=post_pk)
 
-        if content:
-            Comment.objects.create(
-                user=request.user,
-                post=post,
-                content=content
-            )
+        comment_text = request.POST['comment_text']
 
-        return redirect('home-url')
+        Comment.objects.create(post=post, text=comment_text)
+
+        return redirect('home-url', pk=post_pk)
 
 class LikeView(View):
     def post(self, request, post_id):
