@@ -1,11 +1,11 @@
 from django.contrib.auth import login, authenticate, get_user_model
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from .forms import AvatarForm
 from users.models import Account
-
+from django.contrib import messages
 from .models import AccountFollower
 from posts.models import Post
 
@@ -26,26 +26,31 @@ def search_users(request):
     return render(request, 'search_results.html', {'users': users, 'query': query})
 @login_required
 def follow_user(request, user_id):
-    user_to_follow = Account.objects.get(id=user_id)
+    user_to_follow = get_object_or_404(Account, id=user_id)
 
     # Проверяем, подписан ли уже текущий пользователь
     if not AccountFollower.objects.filter(follower=request.user, following=user_to_follow).exists():
         AccountFollower.objects.create(follower=request.user, following=user_to_follow)
-        message = "Вы подписались на пользователя."
+        messages.success(request, "Вы подписались на пользователя.")
     else:
-        message = "Вы уже подписаны на этого пользователя."
+        messages.info(request, "Вы уже подписаны на этого пользователя.")
 
-    return redirect('profile-url', user_id=user_to_follow.id)  # Исправляем на 'profile-url' с параметром user_id
+    return redirect('profile-url', user_id=user_to_follow.id)
 
 @login_required
 def unfollow_user(request, user_id):
-    user_to_unfollow = Account.objects.get(id=user_id)
+    user_to_unfollow = get_object_or_404(Account, id=user_id)
 
-    # Удаляем подписку
-    AccountFollower.objects.filter(follower=request.user, following=user_to_unfollow).delete()
-    message = "Вы отписались от пользователя."
+    # Проверяем, подписан ли текущий пользователь
+    if AccountFollower.objects.filter(follower=request.user, following=user_to_unfollow).exists():
+        # Удаляем подписку
+        AccountFollower.objects.filter(follower=request.user, following=user_to_unfollow).delete()
+        messages.success(request, "Вы отписались от пользователя.")
+    else:
+        messages.info(request, "Вы не подписаны на этого пользователя.")
 
-    return redirect('profile-url', user_id=user_to_unfollow.id)  # Аналогично, используем 'profile-url'
+    return redirect('profile-url', user_id=user_to_unfollow.id)
+
 class UserRegistrationView(TemplateView):
     template_name = 'sign_up.html'
 
@@ -75,24 +80,21 @@ class HomeView(TemplateView):
             post.comments_list = post.comments.all()  # Получаем все комментарии
             posts_with_likes.append(post)
 
+        # Получаем всех пользователей, за исключением текущего
+        all_users = Account.objects.exclude(id=current_user.id)
+
+        # Получаем всех пользователей, на которых подписан текущий пользователь
+        following_user_ids = [f.following.id for f in following_users]
+
+        # Отбираем пользователей, на которых текущий пользователь не подписан
+        suggested_users = all_users.exclude(id__in=following_user_ids)
+
         context = {
             'posts': posts_with_likes,
+            'suggested_users': suggested_users,  # Добавляем рекомендованных пользователей
         }
+
         return context
-
-    def post(self, request, *args, **kwargs):
-        if request.method == 'POST':
-            post_id = request.POST.get('post_id')
-            content = request.POST.get('comment_text')  # Получаем текст комментария
-
-            if post_id and content:
-                post = Post.objects.get(id=post_id)
-                # Создаем комментарий
-                Comment.objects.create(post=post, user=request.user, content=content)
-
-        return redirect('home-url')
-
-
 class UserMakeLoginView(View):
     """Логическая Вююшка для Логина """
     template_name = 'home.html'

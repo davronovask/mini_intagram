@@ -6,21 +6,8 @@
                 <!--***** posts_container start ****** -->
                 <div class="main_section">
                     <div class="posts_container">
-                        <!--                    ЗДЕСЬ ПОКАЗЫВАЮТСЯ ТЕ НА КОГО ВЫ ПОДПИСАНЫ. НАЖИМАЮ НА НИХ ВЫ ПЕРЕХОДИТЕ НА ИХ СТРАНИЦУ ПРОФИЛЯ -->
-                        <div class="stories">
-                            <div class="owl-carousel items owl-loaded owl-drag">
-                                <div class="owl-stage-outer">
-                                    <div class="owl-stage" style="transform: translate3d(0px, 0px, 0px); transition: all; width: 136px;">
-                                        <div class="owl-item active" style="width: 62.857px; margin-right: 5px;">
-                                            <div class="item_s">
-                                                <img src="https://i.ibb.co/3S1hjKR/account1.jpg">
-                                                <p>zineb</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!--ЗДЕСЬ ПОКАЗЫВАЮТСЯ ТЕ НА КОГО ВЫ ПОДПИСАНЫ. НАЖИМАЮ НА НИХ ВЫ ПЕРЕХОДИТЕ НА ИХ СТРАНИЦУ ПРОФИЛЯ -->
+
                             <!-- ***** Это пост!!!!! ****** -->
                             <div class="posts">
                                 {% for post in posts %}
@@ -58,7 +45,7 @@
                                                             {% csrf_token %}
                                                             <button type="submit" class="like-button {% if post.is_liked_by_user %} liked {% endif %}">
                                                                 {% if post.is_liked_by_user %}
-                                                                    <img src="{% static './images/heart.png' %}" alt="Liked">
+                                                                    <img src="{% static './images/red-heart.png' %}" alt="Liked">
                                                                 {% else %}
                                                                     <img src="{% static './images/love.png' %}" alt="Not Liked">
                                                                 {% endif %}
@@ -89,15 +76,66 @@
                                                 <a class="bold" href="#">{{ post.likes.count }} likes</a>
                                             </div>
 
-                                            <div class="post_desc">
-                                                <p>
-                                                    <a class="bold" href="#">{{ post.user.username }}</a> {{ post.content }}
-                                                </p>
-                                                <p>
-                                                    <a class="gray" href="#">View all {{ post.comments_count }} comments</a>
-                                                </p>
-                                                <input type="text" placeholder="Add a comment...">
+                                            <input type="checkbox" id="toggle-comments-{{ post.id }}" class="toggle-comments">
+                                            <label for="toggle-comments-{{ post.id }}" class="gray">
+                                                Посмотреть все {{ post.comments.count }} комментариев
+                                            </label>
+
+                                            <div class="comments-container" id="comments-container-{{ post.id }}">
+                                                {% for comment in post.comments.all %}
+                                                    <div class="comment-item">
+                                                        <p>
+                                                            <a class="bold" href="#">{{ comment.user.username }}</a> {{ comment.content }}
+                                                        </p>
+                                                    </div>
+                                                {% endfor %}
                                             </div>
+
+                                            <!-- Форма для comment -->
+                                            <form class="comment-form" method="POST" action="{% url 'add-comment' post.id %}">
+                                                {% csrf_token %}
+                                                <input type="text" placeholder="Добавьте комментарий..." class="comment-input" name="comment_text" required>
+                                                <button type="submit" class="comment-btn">Отправить</button>
+                                            </form>
+
+
+                                            <!-- Стиль для скрытия комментариев по умолчанию (если нужно) -->
+                                            <style>
+                                                .comments-container {
+                                                    display: none;
+                                                }
+                                                input[type="checkbox"]:checked + label + .comments-container {
+                                                    display: block;
+                                                }
+                                                CSS:
+
+                                                .comment-btn {
+                                                    background-color: #d5006b; /* Темно-розовый цвет */
+                                                    color: white; /* Белый текст */
+                                                    border: none; /* Без рамки */
+                                                    padding: 12px 30px; /* Отступы внутри кнопки */
+                                                    font-size: 16px; /* Размер шрифта */
+                                                    font-weight: bold; /* Жирный текст */
+                                                    border-radius: 25px; /* Закругленные углы */
+                                                    cursor: pointer; /* Курсор в виде руки */
+                                                    transition: all 0.3s ease; /* Плавные переходы */
+                                                }
+
+                                                .comment-btn:hover {
+                                                    background-color: #c2185b; /* Еще более темный розовый при наведении */
+                                                    transform: scale(1.05); /* Легкое увеличение кнопки при наведении */
+                                                }
+
+                                                .comment-btn:active {
+                                                    background-color: #880e4f; /* Более темный розовый при нажатии */
+                                                    transform: scale(1); /* Возвращаем к нормальному размеру */
+                                                }
+
+                                                .comment-btn:focus {
+                                                    outline: none; /
+                                            </style>
+
+
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -113,26 +151,7 @@
                                     padding: 0;
                                     cursor: pointer;
                                 }
-
-                                /* Изменения стилей для изображений лайков */
-                                .like-button img {
-                                    width: 24px; /* Или нужный вам размер */
-                                    height: auto;
-                                    transition: transform 0.2s ease, filter 0.2s ease; /* Плавный переход для анимации */
-                                }
-
-                                /* Подсветка нажатого лайка */
-                                .like-button.liked img {
-                                    filter: brightness(0) saturate(100%) invert(16%) sepia(100%) saturate(4910%) hue-rotate(350deg) brightness(99%) contrast(100%);
-                                }
-
-                                /* Увеличение и эффект нажатия */
-                                .like-button:hover img {
-                                    transform: scale(1.1); /* Увеличение при наведении */
-                                }
                             </style>
-
-
 
                     </div>
                 </div>
@@ -143,100 +162,73 @@
                         <div class="cart">
                             <div>
                                 <div class="img">
-                                    <img src="{% static './images/profile_img.jpg' %}" alt="">
-                                </div>
-                                <div class="info">
-                                    <p class="name">Zineb_essoussi</p>
-                                    <p class="second_name">Zim Ess</p>
-                                </div>
-                            </div>
-                            <div class="switch">
-                                <a href="#">Switch</a>
-                            </div>
-                        </div>
-                        <!--                    ЗДЕСЬ ПОКАЗЫВАЮТСЯ ВСЕ ОСТАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ, ТО ЕСТЬ НЕ ВАШИ ПОДПИСКИ  -->
-                        <div class="suggestions">
-                            <div class="title">
-                                <h4>Suggestions for you</h4>
-                                <a class="dark" href="#">See All</a>
-                            </div>
-                            <div class="cart">
-                                <div>
-                                    <div class="img">
-                                        <img src="{% static './images/profile_img.jpg' %}" alt="">
-                                    </div>
-                                    <div class="info">
-                                        <p class="name">Zineb_essoussi</p>
-                                        <p class="second_name">Zim Ess</p>
-                                    </div>
-                                </div>
-                                <div class="switch">
-                                    <button class="follow_text" href="#">follow</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--***** followers_container end ****** -->
-            </div>
-            <!-- Modal for add messages-->
-            <div class="modal fade" id="message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Comments</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        {% for item in post.comments.all %}
-                        <div class="modal-body">
-                            <div class="comments">
-                                <div class="responses">
-                                    <div class="response comment">
-                                        <div class="d-flex">
-                                            <div class="img">
-                                        {% if user.avatar %}
-                                            <img class="circle story" src="{{ user.avatar.url }}" alt="User Avatar">
-                                        {% else %}
-                                            <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
-                                        {% endif %}
-                                            </div>
-                                            <div class="content">
-                                                <div class="person">
-                                                    <h4>"{{ user.username }}"</h4>
-                                                    <span>3j</span>
-                                                </div>
-                                                <p>{{item.content}}</p>
-                                                <div class="replay">
-                                                    <button>replay</button>
-                                                    <button>see translation</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        <div class="modal-footer">
-                            <form method="post" action="add-comment/">
-                                {% csrf_token %}
-                                <div class="input">
                                     <a href="{% url 'profile-url' user.id %}">
                                         {% if user.avatar %}
                                             <img class="circle story" src="{{ user.avatar.url }}" alt="User Avatar">
                                         {% else %}
                                             <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
                                         {% endif %}
+                                        <span class="d-none d-lg-block">Profile</span>
                                     </a>
-                                    <input name="comment_text" type="text" id="emoji_comment" placeholder="Add a comment..." />
-                                    <button type="submit" class="btn btn-primary">Отправить</button>
                                 </div>
-                                <!-- <div class="emogi"><img src="./images/emogi.png" alt=""></div> -->
-                            </form>
+                                <div class="info">
+                                    <p class="name">{{user.username}}</p>
+                                    <p class="second_name">{{user.firs_name}} {{user.last_name}}</p>
+                                </div>
+                            </div>
+                            <div class="switch">
+                                <a href="#">Switch</a>
+                            </div>
                         </div>
+                        <!-- Рекомендации для пользователя -->
+                        <div class="suggestions">
+                            <div class="title">
+                                <h4>Suggestions for you</h4>
+                                <a class="dark" href="#">See All</a>
+                            </div>
+
+                            {% for user in suggested_users %}
+                                <div class="cart">
+                                    <div>
+                                        <div class="img">
+                                            <a href="{% url 'profile-url' user.id %}">
+                                                {% if user.avatar %}
+                                                    <img class="circle story" src="{{ user.avatar.url }}" alt="User Avatar">
+                                                {% else %}
+                                                    <img class="circle story" src="https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg" alt="Default Avatar">
+                                                {% endif %}
+                                                <span class="d-none d-lg-block">Profile</span>
+                                            </a>
+                                        </div>
+                                        <div class="info">
+                                            <p class="name">{{ user.username }}</p>
+                                            <p class="second_name">{{ user.first_name }} {{ user.last_name }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="switch">
+                                        {% if user in request.user.following.all %}
+                                            <!-- Если текущий пользователь уже подписан на этого пользователя, отображаем "Following" -->
+                                            <button class="follow_text">Following</button>
+                                        {% else %}
+                                            <!-- Если не подписан, отображаем кнопку для подписки -->
+                                            <form method="post" action="{% url 'follow-user' user.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="follow_text">Follow</button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
                     </div>
                 </div>
+                <!--***** followers_container end ****** -->
             </div>
+
+
+
+
             <!--Create model-->
             <div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

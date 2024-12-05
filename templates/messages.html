@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f9;
         }
         .container {
             display: flex;
@@ -37,6 +38,7 @@
             font-size: 18px;
             font-weight: bold;
             margin: 0;
+            color: #6a1b9a; /* Purple */
         }
         .sidebar .conversation {
             display: flex;
@@ -52,6 +54,11 @@
         }
         .sidebar .conversation p {
             margin: 0;
+            font-size: 14px;
+            color: #5e35b1; /* Purple */
+        }
+        .sidebar .conversation p:last-child {
+            color: #777;
         }
 
         /* Chat Window Styles */
@@ -61,6 +68,7 @@
             display: flex;
             flex-direction: column;
             border-left: 1px solid #ddd;
+            background-color: #fafafa;
         }
         .chat-header {
             display: flex;
@@ -78,6 +86,7 @@
             font-size: 18px;
             font-weight: bold;
             margin: 0;
+            color: #6a1b9a; /* Purple */
         }
 
         /* Message Styles */
@@ -107,7 +116,7 @@
             background-color: #f1f1f1;
         }
         .chat-message .message.sent {
-            background-color: #5c6bc0;
+            background-color: #9c27b0; /* Purple */
             color: white;
             margin-left: auto;
         }
@@ -124,10 +133,11 @@
             border-radius: 20px;
             border: 1px solid #ddd;
             margin-right: 10px;
+            background-color: #f3e5f5; /* Light Purple */
         }
         .message-input button {
             padding: 10px 20px;
-            background-color: #5c6bc0;
+            background-color: #9c27b0; /* Purple */
             color: white;
             border: none;
             border-radius: 20px;
@@ -135,7 +145,7 @@
             font-size: 16px;
         }
         .message-input button:hover {
-            background-color: #4a5c90;
+            background-color: #7b1fa2; /* Dark Purple */
         }
     </style>
 </head>
@@ -182,7 +192,13 @@
                         <span>Just now</span>
                     </div>
                 </div>
-                <!-- Add more messages here as needed -->
+                <!-- Additional messages can be added -->
+                <div class="chat-message">
+                    <div class="message received">
+                        <p>Unfortunately, I didn't have time to implement the reels feature.</p>
+                        <span>Just now</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Message Input -->

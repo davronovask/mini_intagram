@@ -1,3 +1,5 @@
+import json
+
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -10,9 +12,8 @@ from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView
 from django.shortcuts import render, redirect
-from .forms import ProfileForm, PostForm
+from .forms import ProfileForm, PostForm, CommentForm
 from django.contrib.auth.decorators import login_required
-
 
 @login_required
 def profile(request, user_id):
@@ -81,17 +82,19 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 
 
 
-class AddCommentView(TemplateView):
+class AddCommentView(View):
     def post(self, request, *args, **kwargs):
-        post_pk = kwargs['pk']
-        post = Post.objects.get(id=post_pk)
+        post = Post.objects.get(pk=kwargs['pk'])  # Убедитесь, что это работает
+        comment_text = request.POST.get('comment_text')  # Получаем текст комментария
 
-        comment_text = request.POST['comment_text']
+        if comment_text:  # Если текст есть
+            Comment.objects.create(
+                content=comment_text,
+                post=post,
+                user=request.user
+            )
 
-        Comment.objects.create(post=post, text=comment_text)
-
-        return redirect('home-url', pk=post_pk)
-
+        return redirect('home-url')
 class LikeView(View):
     def post(self, request, post_id):
         post = Post.objects.get(id=post_id)

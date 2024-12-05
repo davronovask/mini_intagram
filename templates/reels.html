@@ -1,205 +1,84 @@
-{% extends 'base.html' %}
-{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Здесь должны были быть рилсы</title>
+    <style>
+        /* Общие стили для страницы */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6a1b9a, #d5006b); /* Фиолетово-розовый градиент */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
 
-{% block content %}
-<div class="reels">
-    <!-- Your content here -->
-</div>
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.6); /* Полупрозрачный фон для текста */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            max-width: 600px;
+        }
 
-<!-- Modal for add messages-->
-<div class="modal fade" id="message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Comments</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="comments">
-                    <div class="comment">
-                        <div class="d-flex">
-                            <div class="img">
-                                <img src="{% static 'images/profile_img.jpg' %}" alt="">
-                            </div>
-                            <div class="content">
-                                <div class="person">
-                                    <h4>namePerson</h4>
-                                    <span>3j</span>
-                                </div>
-                                <p>Wow amazing shot</p>
-                                <div class="replay">
-                                    <button class="replay">replay</button>
-                                    <button class="translation">see translation</button>
-                                </div>
-                                <div class="answers">
-                                    <button class="see_comment">
-                                        <span class="hide_com">Hide all responses</span>
-                                        <span class="show_c"> <span class="line"></span> See the <span> 1 </span> answers</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="like">
-                            <img class="not_loved" src="{% static 'images/love.png' %}" alt="">
-                            <img class="loved" src="{% static 'images/heart.png' %}" alt="">
-                            <p> 55</p>
-                        </div>
-                    </div>
-                    <div class="responses">
-                        <div class="response comment">
-                            <div class="d-flex">
-                                <div class="img">
-                                    <img src="{% static 'images/profile_img.jpg' %}" alt="">
-                                </div>
-                                <div class="content">
-                                    <div class="person">
-                                        <h4>namePerson</h4>
-                                        <span>3j</span>
-                                    </div>
-                                    <p>Wow amazing shot</p>
-                                    <div class="replay">
-                                        <button>replay</button>
-                                        <button>see translation</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="like">
-                                <img class="not_loved" src="{% static 'images/love.png' %}" alt="">
-                                <img class="loved" src="{% static 'images/heart.png' %}" alt="">
-                                <p> 55</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <form method="post">
-                    <div class="input">
-                        <img src="{% static 'images/profile_img.jpg' %}" alt="">
-                        <input type="text" id="emoji_comment" placeholder="Add a comment..." />
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+        .container h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 20px;
+        }
 
-<!-- Modal for sending posts-->
-<div class="modal fade" id="send_message_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Share</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="send">
-                    <div class="search_person">
-                        <p>To:</p>
-                        <input type="text" placeholder="Search">
-                    </div>
-                    <p>Suggested</p>
-                    <div class="poeple">
-                        <div class="person">
-                            <div class="d-flex">
-                                <div class="img">
-                                    <img src="{% static 'images/profile_img.jpg' %}" alt="">
-                                </div>
-                                <div class="content">
-                                    <div class="person">
-                                        <h4>namePerson</h4>
-                                        <span>zim ess</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="circle">
-                                <span></span>
-                            </div>
-                        </div>
-                        <div class="person">
-                            <div class="d-flex">
-                                <div class="img">
-                                    <img src="{% static 'images/profile_img.jpg' %}" alt="">
-                                </div>
-                                <div class="content">
-                                    <div class="person">
-                                        <h4>namePerson</h4>
-                                        <span>zim ess</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="circle">
-                                <span></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary">Send</button>
-            </div>
-        </div>
-    </div>
-</div>
-      <!--Create model-->
-        <div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title w-100 fs-5 d-flex align-items-end justify-content-between"
-                            id="exampleModalLabel">
-                            <span class="title_create">Create new post</span>
-                            <button class="next_btn_post btn_link"></button>
-                        </h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <img class="up_load" src="{% static 'images/upload.png' %}" alt="upload">
-                        <p>Drag photos and videos here</p>
-                        <button class="btn btn-primary btn_upload">
-                            select from your computer
-                            <form id="upload-form">
-                                <input class="input_select" type="file" id="image-upload" name="image-upload">
-                            </form>
-                        </button>
-                        <div id="image-container" class="hide_img">
-                        </div>
-                        <div id="image_description" class="hide_img">
-                            <div class="img_p"></div>
-                            <div class="description">
-                                <div class="cart">
-                                    <div>
-                                        <div class="img">
-                                            <img src="{% static 'images/profile_img.jpg' %}">
-                                        </div>
-                                        <div class="info">
-                                            <p class="name">Zineb_essoussi</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <form>
-                                    <textarea type="text" id="emoji_create" placeholder="write your email"></textarea>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="post_published hide_img">
-                            <img src="{% static 'images/uploaded_post.gif' %}" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        .container p {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #f0f0f0;
+        }
 
+        .button {
+            background-color: #f50057; /* Ярко-розовый */
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 30px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #d5006b; /* Более темный розовый при наведении */
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Здесь должны были быть рилсы</h1>
+        <p>Но не успела... 😔</p>
+        <p>Возможно, скоро появятся, а пока можете насладиться этим красивым фиолетово-розовым дизайном.</p>
+        <a href="{% url 'home-url' %}" class="button">Вернуться на главную</a>
     </div>
 
-    <!-- <script src="{% static 'sass/vender/bootstrap.bundle.js' %}"></script>
-    <script src="{% static 'sass/vender/bootstrap.bundle.min.js' %}"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js" integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ" crossorigin="anonymous"></script>
-    <script src="{% static 'owlcarousel/jquery.min.js' %}"></script>
-    <script src="{% static 'owlcarousel/owl.carousel.min.js' %}"></script>
-    <script src="{% static 'js/carousel.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
-    <script src="{% static 'js/main.js' %}"></script>
+    <div class="footer">
+        <p>&copy; 2024. Все права защищены.</p>
+    </div>
 
-{% endblock %}
+</body>
+</html>

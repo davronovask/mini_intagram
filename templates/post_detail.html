@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="post-container">
+        <div class="post">
+            <img src="{{ post.image.url }}" alt="{{ post.content }}" class="img-fluid">
+            <p>{{ post.content }}</p>
+            <small>Posted by {{ post.user.username }} on {{ post.created_at }}</small>
+        </div>
+
+        <div class="comments-section">
+            <h4>Comments</h4>
+            {% for comment in comments %}
+                <div class="comment">
+                    <p><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</p>
+                    <small>{{ comment.created_at }}</small>
+                </div>
+            {% empty %}
+                <p>No comments yet.</p>
+            {% endfor %}
+
+            <!-- Комментарий -->
+            {% if user.is_authenticated %}
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Post Comment</button>
+                </form>
+            {% else %}
+                <p>You need to be logged in to post a comment.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

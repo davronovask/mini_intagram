@@ -24,25 +24,15 @@ urlpatterns = [
     path('reels/', ReelsView.as_view(), name='reels-url'),
     path('messages/', MessagesView.as_view(), name='messages-url'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
-
-    # Подписка и отписка
     path('follow/<int:user_id>/', follow_user, name='follow-user'),
     path('unfollow/<int:user_id>/', unfollow_user, name='unfollow-user'),
-
-    # Загрузка аватара
     path('upload-avatar/<int:user_id>/', UploadAvatarView.as_view(), name='upload_avatar'),
-
-    # Лайк на посте
     path('like/<int:post_id>/', LikeView.as_view(), name='like-url'),
-
-
-    # Поиск пользователей
     path('search/', search_users, name='search-users-url'),  # Поиск пользователей
     path('profile/<int:user_id>/', ProfileView.as_view(), name='profile-url'),  # Это путь для конкретного профиля
-
     path('create/', views.create_post, name='create-post'),
 
-    path('add-comment/<int:pk>/', AddCommentView.as_view(), name='add-comment-url'),
+    path('post/<int:pk>/add_comment/', AddCommentView.as_view(), name='add-comment'),
 
 ]
 

@@ -45,3 +45,5 @@ class Like(models.Model):
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     bio = models.TextField(null=True, blank=True)
+
+    my_following = models.ManyToManyField('self', related_name='my_followers', symmetrical=False)
