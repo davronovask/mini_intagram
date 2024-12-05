@@ -20,7 +20,7 @@ urlpatterns = [
     path('make-login/', UserMakeLoginView.as_view(), name='make-login-url'),
     path('home/', HomeView.as_view(), name='home-url'),
     path('make-registration/', UserMakeRegistrationView.as_view(), name='make-registration-url'),
-    path('profile/', ProfileView.as_view(), name='profile-url'),  # Эта строка может быть удалена или обновлена
+    path('profile/', ProfileView.as_view(), name='profile-url'), 
     path('reels/', ReelsView.as_view(), name='reels-url'),
     path('messages/', MessagesView.as_view(), name='messages-url'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
@@ -29,7 +29,7 @@ urlpatterns = [
     path('upload-avatar/<int:user_id>/', UploadAvatarView.as_view(), name='upload_avatar'),
     path('like/<int:post_id>/', LikeView.as_view(), name='like-url'),
     path('search/', search_users, name='search-users-url'),  # Поиск пользователей
-    path('profile/<int:user_id>/', ProfileView.as_view(), name='profile-url'),  # Это путь для конкретного профиля
+    path('profile/<int:user_id>/', ProfileView.as_view(), name='profile-url'),  
     path('create/', views.create_post, name='create-post'),
 
     path('post/<int:pk>/add_comment/', AddCommentView.as_view(), name='add-comment'),
